@@ -1,0 +1,21 @@
+version: '3'
+networks:
+  database_fantasy_map_network:
+    external: true
+
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - "${SERVER_PORT}:8080"
+    container_name: fantasy_map_backend
+    environment:
+      - SERVER_PORT=8080
+      - DB_SERVER=${DB_SERVER}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - database_fantasy_map_network

@@ -1,0 +1,48 @@
+version: '3.1'
+
+networks:
+  fantasy_map_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/16
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: fantasy_map_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./data:/var/lib/postgresql/data  # Mount a volume to persist data
+    ports:
+      - "5432:5432"
+    networks:
+      - fantasy_map_network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: fantasy_map_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres  # Ensure pgAdmin starts after PostgreSQL
+    networks:
+      - fantasy_map_network
+
+  seed:
+    image: postgres:latest
+    container_name: fantasy_map_dbseed
+    command: ["bash", "-c", "sleep 10 && psql -h postgres -U ${POSTGRES_USER} -d ${POSTGRES_DB} -a -f /seeds/seed.sql"]
+    volumes:
+      - ./seed:/seeds  # Mount a volume containing your seed file
+    depends_on:
+      - postgres
+    networks:
+      - fantasy_map_network
