@@ -47,6 +47,16 @@ public class UserManager {
         return this.createUserDB(user);
     }
 
+    public UserDB findUser(int user_id) {
+        Database.Init();
+        User user = User.findFirst("user_id = ?", user_id);
+        if (user == null){
+            return null;
+        }
+        Database.Close();
+        return this.createUserDB(user);
+    }
+
     private UserDB createUserDB(User user){
         Database.Init();
         int id = (int)user.get("user_id");

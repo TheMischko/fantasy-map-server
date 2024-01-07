@@ -47,8 +47,8 @@ public class LoginHandler implements HttpHandler {
 
             String token = this.authService.authenticate(user.name, user.user_id);
             byte[] tokenBytes = token.getBytes();
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, tokenBytes.length);
             exchange.getResponseHeaders().set("Content-Type", "text/plain");
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, tokenBytes.length);
             OutputStream outputStream = exchange.getResponseBody();
             outputStream.write(tokenBytes);
             outputStream.close();

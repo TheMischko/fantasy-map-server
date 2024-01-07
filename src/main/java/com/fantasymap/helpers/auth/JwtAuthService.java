@@ -1,5 +1,7 @@
 package com.fantasymap.helpers.auth;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
@@ -31,6 +33,16 @@ public class JwtAuthService implements AuthService{
             return true;
         } catch (JwtException e){
             return false;
+        }
+    }
+
+    public int getTokenUserId(String token){
+        try {
+            Claims claims = Jwts.parser().verifyWith(this.secret).build().parseSignedClaims(token).getPayload();
+            int userId = (int)claims.get("user_id");
+            return userId;
+        } catch (JwtException e){
+            return -1;
         }
     }
 }
